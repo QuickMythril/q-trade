@@ -362,7 +362,11 @@ export const TradeOffers: React.FC<any> = ({ltcBalance}:any) => {
     
         // Update transactions in IndexedDB
         const result = await updateTransactionInDB(transactionData);
-
+        setOpen(true)
+        setInfo({
+          type: 'success',
+          message: "Submitted Order"
+        })
         fetchOngoingTransactions()
         if(isUsingGateway){
           setRecord(transactionData)
@@ -370,11 +374,7 @@ export const TradeOffers: React.FC<any> = ({ltcBalance}:any) => {
             message: `Keep a record of your order in case your trade gets stuck`,
            })
         }
-        setOpen(true)
-        setInfo({
-          type: 'success',
-          message: "Submitted Order"
-        })
+        
       }
 
     } catch (error) {
@@ -554,11 +554,24 @@ const handleClose = (
         >
           <DialogTitle id="alert-dialog-title">{"Download record"}</DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-description">
+            <DialogContentText id="alert-dialog-description" sx={{
+              color: 'white'
+            }}>
               {messageInfo.message}
             </DialogContentText>
-            <Button onClick={()=> {
-              saveFileToDisk(record)
+            <Button onClick={async ()=> {
+              try {
+                const fileName = "traderecord_" + Date.now() + '_'  + ".json";
+                const dataString = JSON.stringify(record);
+  const blob = new Blob([dataString], { type: 'application/json' });
+                await qortalRequest({
+                  action: 'SAVE_FILE',
+                  filename: fileName,
+                  blob
+                })
+              } catch (error) {
+                
+              }
             }}>Save Record</Button>
           </DialogContent>
           <DialogActions>

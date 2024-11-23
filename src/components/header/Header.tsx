@@ -20,7 +20,7 @@ import gameContext from "../../contexts/gameContext";
 import { UserContext } from "../../contexts/userContext";
 import { cropAddress } from "../../utils/cropAddress";
 import { BubbleCardColored1 } from "../../pages/Home/Home-Styles";
-import logoSVG from "../../assets/SVG/LOGO.svg";
+import qtradeLogo from '../../components/common/icons/qtradeLogo.png'
 import {
   Alert,
   Avatar,
@@ -167,9 +167,9 @@ export const Header = ({ qortBalance, ltcBalance, mode, setMode }: any) => {
       >
         <LogoColumn>
           <img
-            src={logoSVG}
+            src={qtradeLogo}
             style={{
-              height: "24px",
+              height: "40px",
             }}
           />
         </LogoColumn>
@@ -190,7 +190,9 @@ export const Header = ({ qortBalance, ltcBalance, mode, setMode }: any) => {
         </Box>
       </Box>
 
-      <RightColumn>
+      <RightColumn sx={{
+        alignItems: 'center'
+      }}>
         <HeaderText>
           Balance: {qortBalance} QORT |{" "}
           {ltcBalance === null ? "N/A" : ltcBalance} LTC
