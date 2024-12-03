@@ -34,6 +34,8 @@ export interface IContextProps {
    isUsingGateway: boolean;
    selectedCoin: string;
    setSelectedCoin: (val: string) => void;
+   selectedCoinSymbol: string;
+   setSelectedCoinSymbol: (val: string) => void;
 }
 
 const defaultState: IContextProps = {
@@ -57,6 +59,8 @@ const defaultState: IContextProps = {
    isUsingGateway: true,
    selectedCoin: "LITECOIN",
    setSelectedCoin: () => {},
+   selectedCoinSymbol: "LTC",
+   setSelectedCoinSymbol: () => {},
 };
 
 export default React.createContext(defaultState);

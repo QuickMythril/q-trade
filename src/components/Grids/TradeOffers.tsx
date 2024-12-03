@@ -35,7 +35,7 @@ export const autoSizeStrategy: SizeColumnsToContentStrategy = {
 export const TradeOffers: React.FC<any> = ({coinBalance}:any) => {
   const [offers, setOffers] = useState<any[]>([])
   
-  const { fetchOngoingTransactions, onGoingTrades, updateTransactionInDB, isUsingGateway, selectedCoin } = useContext(gameContext);
+  const { fetchOngoingTransactions, onGoingTrades, updateTransactionInDB, isUsingGateway, selectedCoin, selectedCoinSymbol } = useContext(gameContext);
   const listOfOngoingTradesAts = useMemo(()=> {
       return onGoingTrades?.filter((item)=> item?.status !== 'trade-failed')?.map((trade)=> trade?.qortalAtAddress) || []
   }, [onGoingTrades])
@@ -92,10 +92,10 @@ export const TradeOffers: React.FC<any> = ({coinBalance}:any) => {
     { headerName: "QORT AMOUNT", field: "qortAmount" , flex: 1, // Flex makes this column responsive
     minWidth: 150, // Ensure it doesn't shrink too much
     resizable: true },
-    { headerName: `${selectedCoin}/QORT`, valueGetter: (params) => +params.data.foreignAmount / +params.data.qortAmount, sortable: true, sort: 'asc', flex: 1, // Flex makes this column responsive
+    { headerName: `${selectedCoinSymbol}/QORT`, valueGetter: (params) => +params.data.foreignAmount / +params.data.qortAmount, sortable: true, sort: 'asc', flex: 1, // Flex makes this column responsive
     minWidth: 150, // Ensure it doesn't shrink too much
     resizable: true  },
-    { headerName: `Total ${selectedCoin} Value`, field: "foreignAmount", flex: 1, // Flex makes this column responsive
+    { headerName: `Total ${selectedCoinSymbol} Value`, field: "foreignAmount", flex: 1, // Flex makes this column responsive
     minWidth: 150, // Ensure it doesn't shrink too much
     resizable: true },
     { headerName: "Seller", field: "qortalCreator", flex: 1, // Flex makes this column responsive
@@ -519,7 +519,7 @@ const handleClose = (
           color: selectedTotalCoin > coinBalance ? 'red' : 'white',
         }}><span>{selectedTotalCoin?.toFixed(4)}</span> <span style={{
           marginLeft: 'auto'
-        }}>{selectedCoin}</span></Typography>
+        }}>{selectedCoinSymbol}</span></Typography>
 
 
         </Box>
@@ -529,7 +529,7 @@ const handleClose = (
           
         }}><span>{coinBalance?.toFixed(4)}</span> <span style={{
           marginLeft: 'auto'
-        }}>{selectedCoin} balance</span></Typography>
+        }}>{selectedCoinSymbol} balance</span></Typography>
       </Box>
       {BuyButton()}
     </Box>

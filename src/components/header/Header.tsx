@@ -66,7 +66,7 @@ export const Header = ({ qortBalance, coinBalance, mode, setMode }: any) => {
   const [checked, setChecked] = useState(false);
   const [open, setOpen] = useState(false);
   const [info, setInfo] = useState<any>(null);
-  const { isUsingGateway, selectedCoin, setSelectedCoin } = useContext(gameContext);
+  const { isUsingGateway, selectedCoin, setSelectedCoin, selectedCoinSymbol, setSelectedCoinSymbol } = useContext(gameContext);
   const supportedCoins = [
     { name: "Litecoin", symbol: "LTC", blockchain: "LITECOIN" },
     { name: "Bitcoin", symbol: "BTC", blockchain: "BITCOIN" },
@@ -190,7 +190,12 @@ export const Header = ({ qortBalance, coinBalance, mode, setMode }: any) => {
           <Select
           size="small"
             value={selectedCoin}
-            onChange={(e) => setSelectedCoin(e.target.value)}
+            onChange={(e) => {
+              const selectedBlockchain = e.target.value;
+              setSelectedCoin(selectedBlockchain);
+              const coin = supportedCoins.find((c) => c.blockchain === selectedBlockchain);
+              setSelectedCoinSymbol(coin?.symbol || "");
+            }}
           >
             {supportedCoins.map((coin) => (
               <MenuItem key={coin.blockchain} value={coin.blockchain}>
@@ -203,7 +208,7 @@ export const Header = ({ qortBalance, coinBalance, mode, setMode }: any) => {
 
       <RightColumn>
         <HeaderText>
-          Balance: {qortBalance} QORT | {coinBalance === null ? "N/A" : coinBalance} {selectedCoin}
+          Balance: {qortBalance} QORT | {coinBalance === null ? "N/A" : coinBalance} {selectedCoinSymbol}
         </HeaderText>
         <NameRow>
           {userInfo?.name ? (

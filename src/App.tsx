@@ -75,7 +75,8 @@ function App() {
   const [coinBalances, setCoinBalances] = useState<{ [key: string]: number | null }>({});
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [OAuthLoading, setOAuthLoading] = useState<boolean>(false);
-  const { selectedCoin, setSelectedCoin } = useContext(gameContext);
+  const [selectedCoin, setSelectedCoin] = useState("LITECOIN");
+  const [selectedCoinSymbol, setSelectedCoinSymbol] = useState("LTC");
   const db = useIndexedDBContext();
   const [isUsingGateway, setIsUsingGateway] = useState(true)
 
@@ -192,15 +193,15 @@ function App() {
     if(!userInfo?.address) return
     const intervalGetTradeInfo = setInterval(() => {
       fetchOngoingTransactions()
-      getCoinBalance(selectedCoin)
+      getCoinBalance(selectedCoinSymbol)
       getQortBalance()
     }, 150000)
-    getCoinBalance(selectedCoin)
-      getQortBalance()
+    getCoinBalance(selectedCoinSymbol)
+    getQortBalance()
     return () => {
       clearInterval(intervalGetTradeInfo)
     }
-  }, [userInfo?.address, isAuthenticated, selectedCoin])
+  }, [userInfo?.address, isAuthenticated, selectedCoinSymbol])
 
 
   const handleMessage = async (event: any) => {
@@ -259,6 +260,8 @@ function App() {
     qortBalance,
     selectedCoin,
     setSelectedCoin,
+    selectedCoinSymbol,
+    setSelectedCoinSymbol,
     isAuthenticated, 
     setIsAuthenticated,
     OAuthLoading, 

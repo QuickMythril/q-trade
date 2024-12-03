@@ -26,7 +26,7 @@ export default function TradeBotList({ qortAddress, failedTradeBots }) {
   const offeringTrades = useRef<any[]>([]);
   const qortAddressRef = useRef(null);
   const gridRef = useRef<any>(null);
-  const {updateTemporaryFailedTradeBots,  fetchTemporarySellOrders, deleteTemporarySellOrder, selectedCoin} = useContext(gameContext)
+  const {updateTemporaryFailedTradeBots,  fetchTemporarySellOrders, deleteTemporarySellOrder, selectedCoin, selectedCoinSymbol} = useContext(gameContext)
   const [open, setOpen] = useState(false)
   const [info, setInfo] = useState<any>(null)
   const columnDefs: ColDef[] = [
@@ -46,7 +46,7 @@ export default function TradeBotList({ qortAddress, failedTradeBots }) {
       resizable: true,
     },
     {
-      headerName: `${selectedCoin}/QORT`,
+      headerName: `${selectedCoinSymbol}/QORT`,
       valueGetter: (params) =>
         +params.data.foreignAmount / +params.data.qortAmount,
       sortable: true,
@@ -56,7 +56,7 @@ export default function TradeBotList({ qortAddress, failedTradeBots }) {
       resizable: true,
     },
     {
-      headerName: `Total ${selectedCoin} Value`,
+      headerName: `Total ${selectedCoinSymbol} Value`,
       field: "foreignAmount",
       flex: 1, // Flex makes this column responsive
       minWidth: 150, // Ensure it doesn't shrink too much
