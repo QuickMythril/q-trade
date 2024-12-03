@@ -261,6 +261,7 @@ export const TradeOffers: React.FC<any> = ({coinBalance}:any) => {
       socketLink = `wss://appnode.qortal.org/websockets/crosschain/tradeoffers?foreignBlockchain=${selectedCoin}&includeHistoric=true`
     } else {
       socketLink = `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/websockets/crosschain/tradeoffers?foreignBlockchain=${selectedCoin}&includeHistoric=true`
+
     }
     const socket = new WebSocket(socketLink)
     socket.onopen = () => {
@@ -316,7 +317,7 @@ export const TradeOffers: React.FC<any> = ({coinBalance}:any) => {
         setOpen(true)
         setInfo({
           type: 'error',
-          message: `You don't have enough ${selectedCoin} or your balance was not retrieved`
+          message: `You don't have enough ${selectedCoinSymbol} or your balance was not retrieved`
         })
         return
       }

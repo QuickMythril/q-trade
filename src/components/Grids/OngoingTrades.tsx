@@ -10,7 +10,7 @@ const autoSizeStrategy: SizeColumnsToContentStrategy = {
 };
 
 export const OngoingTrades = () => {
-    const { onGoingTrades, selectedCoin } = useContext(gameContext);
+    const { onGoingTrades, selectedCoinSymbol } = useContext(gameContext);
 
 
     const defaultColDef = {
@@ -35,9 +35,9 @@ export const OngoingTrades = () => {
             resizable: true ,
             flex: 1, minWidth: 100
         },
-        { headerName: `Amount (${selectedCoin})`, valueGetter: (params) => +params.data.tradeInfo.qortAmount, resizable: true, flex: 1, minWidth: 100  },
-        { headerName: `${selectedCoin}/QORT`, valueGetter: (params) => +params.data.tradeInfo.expectedForeignAmount / +params.data.tradeInfo.qortAmount , resizable: true , flex: 1, minWidth: 100},
-        { headerName: `Total ${selectedCoin} Value`, valueGetter: (params) => +params.data.tradeInfo.expectedForeignAmount, resizable: true , flex: 1, minWidth: 100 },
+        { headerName: "Amount (QORT)", valueGetter: (params) => +params.data.tradeInfo.qortAmount, resizable: true, flex: 1, minWidth: 100  },
+        { headerName: `${selectedCoinSymbol}/QORT`, valueGetter: (params) => +params.data.tradeInfo.expectedForeignAmount / +params.data.tradeInfo.qortAmount , resizable: true , flex: 1, minWidth: 100},
+        { headerName: `Total ${selectedCoinSymbol} Value`, valueGetter: (params) => +params.data.tradeInfo.expectedForeignAmount, resizable: true , flex: 1, minWidth: 100 },
         {
             headerName: "Notes",  valueGetter: (params) => {
                 if (params.data.tradeInfo.mode === 'TRADING') {

@@ -12,7 +12,6 @@ import { autoSizeStrategy } from "../Grids/TradeOffers";
 import { Alert, Box, Snackbar, SnackbarCloseReason, Typography } from "@mui/material";
 import gameContext from "../../contexts/gameContext";
 
-
 const defaultColDef = {
   resizable: true, // Make columns resizable by default
   sortable: true, // Make columns sortable by default
@@ -332,7 +331,7 @@ export default function TradeBotList({ qortAddress, failedTradeBots }) {
           color: selectedTotalCoin > coinBalance ? 'red' : 'white',
         }}><span>{selectedTotalCoin?.toFixed(4)}</span> <span style={{
           marginLeft: 'auto'
-         }}>{selectedCoin}</span></Typography> */}
+         }}>{selectedCoinSymbol}</span></Typography> */}
 
 
         </Box>
@@ -342,7 +341,7 @@ export default function TradeBotList({ qortAddress, failedTradeBots }) {
           
         }}><span>{coinBalance?.toFixed(4)}</span> <span style={{
           marginLeft: 'auto'
-        }}>{selectedCoin} balance</span></Typography> */}
+        }}>{selectedCoinSymbol} balance</span></Typography> */}
       </Box>
       {CancelButton()}
     </Box>
