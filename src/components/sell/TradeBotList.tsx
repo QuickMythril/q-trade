@@ -86,12 +86,29 @@ export default function TradeBotList({ qortAddress, failedTradeBots }) {
       .map((col: any) => col.getColId());
     params.columnApi.autoSizeColumns(allColumnIds); // Automatically adjust the width to fit content
   }, []);
+  // Add ref for WebSocket instance
+  const tradeBotSocketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
+    if (!qortAddress) return;
     if (qortAddress) {
       qortAddressRef.current = qortAddress;
-    }
-  }, [qortAddress]);
+    };
+    // Clean up previous socket if any
+    if (tradeBotSocketRef.current) {
+      tradeBotSocketRef.current.close();
+    };
+    // Reset trade data
+    tradeBotListRef.current = [];
+    setTradeBotList([]);
+    setSelectedTrade(null); // Reset selected trade
+    initTradeOffersWebSocket();
+    return () => {
+      if (tradeBotSocketRef.current) {
+        tradeBotSocketRef.current.close();
+      }
+    };
+  }, [qortAddress, selectedCoin]);
 
   const restartTradeOffersWebSocket = () => {
     setTimeout(() => initTradeOffersWebSocket(true), 50);
@@ -159,6 +176,7 @@ export default function TradeBotList({ qortAddress, failedTradeBots }) {
     // let socketLink = `ws://127.0.0.1:12391/websockets/crosschain/tradebot?foreignBlockchain=${selectedCoin}`;
     let socketLink = `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/websockets/crosschain/tradebot?foreignBlockchain=${selectedCoin}`;
     const socket = new WebSocket(socketLink);
+    tradeBotSocketRef.current = socket; // Keep track of the socket
     socket.onopen = () => {
       setTimeout(pingSocket, 50);
       tradeOffersSocketCounter += 1;

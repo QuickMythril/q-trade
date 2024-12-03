@@ -231,6 +231,7 @@ export const TradeOffers: React.FC<any> = ({coinBalance}:any) => {
     
    
     const socket = new WebSocket(socketLink)
+    tradePresenceSocketRef.current = socket // Keep track of the socket
     socket.onopen = () => {
       setTimeout(pingSocket, 50)
     }
@@ -252,6 +253,8 @@ export const TradeOffers: React.FC<any> = ({coinBalance}:any) => {
     }
   }
 
+  const tradeOffersSocketRef = useRef<WebSocket | null>(null)
+  const tradePresenceSocketRef = useRef<WebSocket | null>(null)
   const initTradeOffersWebSocket = (restarted = false) => {
     let tradeOffersSocketCounter = 0
     let socketTimeout: any
@@ -264,6 +267,7 @@ export const TradeOffers: React.FC<any> = ({coinBalance}:any) => {
 
     }
     const socket = new WebSocket(socketLink)
+    tradeOffersSocketRef.current = socket // Keep track of the socket
     socket.onopen = () => {
       setTimeout(pingSocket, 50)
       tradeOffersSocketCounter += 1
@@ -290,6 +294,19 @@ export const TradeOffers: React.FC<any> = ({coinBalance}:any) => {
 
   useEffect(() => {
     blockedTradesList.current = JSON.parse(localStorage.getItem('failedTrades') || '[]')
+    // Clean up previous sockets if any
+    if (tradeOffersSocketRef.current) {
+      tradeOffersSocketRef.current.close()
+    }
+    if (tradePresenceSocketRef.current) {
+      tradePresenceSocketRef.current.close()
+    }
+    // Reset trade data
+    offeringTrades.current = []
+    tradePresenceTxns.current = []
+    setOffers([])
+    setSelectedOffers([]) // Reset selected offers
+    setSelectedOffer(null)
     initTradePresenceWebSocket()
     initTradeOffersWebSocket()
     getNewBlockedTrades()
@@ -299,8 +316,15 @@ export const TradeOffers: React.FC<any> = ({coinBalance}:any) => {
 
     return () => {
       clearInterval(intervalBlockTrades)
+      // Clean up sockets on unmount
+      if (tradeOffersSocketRef.current) {
+        tradeOffersSocketRef.current.close()
+      }
+      if (tradePresenceSocketRef.current) {
+        tradePresenceSocketRef.current.close()
+      }
     }
-  }, [isUsingGateway])
+  }, [isUsingGateway, selectedCoin])
 
 
 
