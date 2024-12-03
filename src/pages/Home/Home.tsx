@@ -24,12 +24,13 @@ export const HomePage: FC<IsInstalledProps> = ({}) => {
   const navigate = useNavigate();
   const {
     qortBalance,
-    ltcBalance,
+    coinBalances,
     userInfo,
     isAuthenticated,
     setIsAuthenticated,
     OAuthLoading,
     setOAuthLoading,
+    selectedCoin,
   } = useContext(gameContext);
   const { setNotification } = useContext(NotificationContext);
   const [mode, setMode] = useState("buy");
@@ -53,7 +54,7 @@ export const HomePage: FC<IsInstalledProps> = ({}) => {
     <AppContainer>
       <Header
         qortBalance={qortBalance}
-        ltcBalance={ltcBalance}
+        coinBalance={coinBalances[selectedCoin]}
         mode={mode}
         setMode={setMode}
       />
@@ -97,7 +98,7 @@ export const HomePage: FC<IsInstalledProps> = ({}) => {
           </TextTableTitle>
         </Box>
         <Spacer height="10px" />
-        <TradeOffers ltcBalance={ltcBalance} />
+        <TradeOffers coinBalance={coinBalances[selectedCoin]} />
       </div>
 
       <CreateSell show={mode === "sell"} qortAddress={userInfo?.address} />

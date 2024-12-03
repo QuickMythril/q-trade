@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import gameContext from "./contexts/gameContext";
 import ReactGA from "react-ga4";
 import "./App.css";
 import socketService from "./services/socketService";
@@ -71,9 +72,10 @@ export async function sendRequestToExtension(
 function App() {
   const [userInfo, setUserInfo] = useState<any>(null);
   const [qortBalance, setQortBalance] = useState<any>(null);
-  const [ltcBalance, setLtcBalance] = useState<any>(null);
+  const [coinBalances, setCoinBalances] = useState<{ [key: string]: number | null }>({});
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [OAuthLoading, setOAuthLoading] = useState<boolean>(false);
+  const { selectedCoin, setSelectedCoin } = useContext(gameContext);
   const db = useIndexedDBContext();
   const [isUsingGateway, setIsUsingGateway] = useState(true)
 
@@ -172,14 +174,14 @@ function App() {
     setQortBalance(balanceResponse.data?.value)
   }
 
-  const getLTCBalance = async () => {
+  const getCoinBalance = async (coin: string) => {
     try {
       const response = await qortalRequest({
         action: "GET_WALLET_BALANCE",
-        coin: "LTC"
+        coin: coin
       });
       if(!response?.error){
-        setLtcBalance(+response)
+        setCoinBalances((prevBalances) => ({ ...prevBalances, [coin]: +response }))
       }
     } catch (error) {
    //
@@ -190,15 +192,15 @@ function App() {
     if(!userInfo?.address) return
     const intervalGetTradeInfo = setInterval(() => {
       fetchOngoingTransactions()
-      getLTCBalance()
+      getCoinBalance(selectedCoin)
       getQortBalance()
     }, 150000)
-    getLTCBalance()
+    getCoinBalance(selectedCoin)
       getQortBalance()
     return () => {
       clearInterval(intervalGetTradeInfo)
     }
-  }, [userInfo?.address, isAuthenticated])
+  }, [userInfo?.address, isAuthenticated, selectedCoin])
 
 
   const handleMessage = async (event: any) => {
@@ -208,7 +210,7 @@ function App() {
       setAvatar("");
       setIsAuthenticated(false);
       setQortBalance(null)
-      setLtcBalance(null)
+      setCoinBalances(null)
       localStorage.setItem("token", "");
     } else if(event.data.type === "RESPONSE_FOR_TRADES"){
     
@@ -253,8 +255,10 @@ function App() {
     setUserNameAvatar,
     onGoingTrades,
     fetchOngoingTransactions,
-    ltcBalance,
+    coinBalances,
     qortBalance,
+    selectedCoin,
+    setSelectedCoin,
     isAuthenticated, 
     setIsAuthenticated,
     OAuthLoading, 

@@ -14,7 +14,7 @@ export interface UserNameAvatar {
 }
 
 export interface IContextProps {
-  ltcBalance: number | null;
+  coinBalances: { [key: string]: number | null };
   qortBalance: number | null;
   userInfo: any;
   setUserInfo: (val: any) => void;
@@ -32,11 +32,13 @@ export interface IContextProps {
    updateTemporaryFailedTradeBots: (val: any)=> void;
    fetchTemporarySellOrders: ()=> void;
    isUsingGateway: boolean;
+   selectedCoin: string;
+   setSelectedCoin: (val: string) => void;
 }
 
 const defaultState: IContextProps = {
   qortBalance: null,
-  ltcBalance: null,
+  coinBalances: {},
   userInfo: null,
   setUserInfo: () => {},
   userNameAvatar: {},
@@ -52,7 +54,9 @@ const defaultState: IContextProps = {
   deleteTemporarySellOrder: ()=> {},
    updateTemporaryFailedTradeBots: ()=> {},
    fetchTemporarySellOrders: ()=> {},
-   isUsingGateway: true
+   isUsingGateway: true,
+   selectedCoin: "LITECOIN",
+   setSelectedCoin: () => {},
 };
 
 export default React.createContext(defaultState);

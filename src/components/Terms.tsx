@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React, { useContext } from 'react';
+import gameContext from '../contexts/gameContext';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
@@ -20,6 +21,7 @@ export const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 export const Terms =() => {
   const [open, setOpen] = React.useState(false);
+  const { selectedCoin } = useContext(gameContext);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -55,14 +57,14 @@ export const Terms =() => {
         </IconButton>
         <DialogContent dividers>
         <Typography gutterBottom>
-  The purpose of qort.trade is to make trading LTC for QORT as easy as possible. The maintainers of this site do not profit from its use—there are no additional fees for buying QORT through this site. There are two ways to place a buy order: 
+  The purpose of qort.trade is to make trading {selectedCoin} for QORT as easy as possible. The maintainers of this site do not profit from its use—there are no additional fees for buying QORT through this site. There are two ways to place a buy order: 
   1. Use the gateway 
   2. Use your local node. 
   By using qort.trade, you agree to the following terms and conditions.
 </Typography>
 
 <Typography gutterBottom>
-  Using the gateway means you trust the maintainer of the node, as your LTC private key will need to be handled by that node to execute a trade order. If you have more than 4 QORT and your public key is already on the blockchain, your LTC private key will be transmitted using q-chat. If not, the message will be encrypted in the same manner as q-chat but stored temporarily in a database to ensure it reaches its destination.
+  Using the gateway means you trust the maintainer of the node, as your {selectedCoin} private key will need to be handled by that node to execute a trade order. If you have more than 4 QORT and your public key is already on the blockchain, your {selectedCoin} private key will be transmitted using q-chat. If not, the message will be encrypted in the same manner as q-chat but stored temporarily in a database to ensure it reaches its destination.
 </Typography>
 
 <Typography gutterBottom>
@@ -70,7 +72,7 @@ export const Terms =() => {
 </Typography>
 
 <Typography gutterBottom>
-  The maintainers of this site are not responsible for any lost LTC, QORT, or other cryptocurrencies that may result from using this site. This is a hobby project, and mistakes in the code may occur. Please proceed with caution.
+  The maintainers of this site are not responsible for any lost {selectedCoin}, QORT, or other cryptocurrencies that may result from using this site. This is a hobby project, and mistakes in the code may occur. Please proceed with caution.
 </Typography>
 
         </DialogContent>

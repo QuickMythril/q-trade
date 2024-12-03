@@ -12,53 +12,12 @@ import { autoSizeStrategy } from "../Grids/TradeOffers";
 import { Alert, Box, Snackbar, SnackbarCloseReason, Typography } from "@mui/material";
 import gameContext from "../../contexts/gameContext";
 
+
 const defaultColDef = {
   resizable: true, // Make columns resizable by default
   sortable: true, // Make columns sortable by default
   suppressMovable: true, // Prevent columns from being movable
 };
-
-const columnDefs: ColDef[] = [
-  {
-    headerCheckboxSelection: false, // Adds a checkbox in the header for selecting all rows
-    checkboxSelection: true, // Adds checkboxes in each row for selection
-    headerName: "Select", // You can customize the header name
-    width: 50, // Adjust the width as needed
-    pinned: "left", // Optional, to pin this column on the left
-    resizable: false,
-  },
-  {
-    headerName: "QORT AMOUNT",
-    field: "qortAmount",
-    flex: 1, // Flex makes this column responsive
-    minWidth: 150, // Ensure it doesn't shrink too much
-    resizable: true,
-  },
-  {
-    headerName: "LTC/QORT",
-    valueGetter: (params) =>
-      +params.data.foreignAmount / +params.data.qortAmount,
-    sortable: true,
-    sort: "asc",
-    flex: 1, // Flex makes this column responsive
-    minWidth: 150, // Ensure it doesn't shrink too much
-    resizable: true,
-  },
-  {
-    headerName: "Total LTC Value",
-    field: "foreignAmount",
-    flex: 1, // Flex makes this column responsive
-    minWidth: 150, // Ensure it doesn't shrink too much
-    resizable: true,
-  },
-  {
-    headerName: "Status",
-    field: "status",
-    flex: 1, // Flex makes this column responsive
-    minWidth: 300, // Ensure it doesn't shrink too much
-    resizable: true,
-  },
-];
 
 export default function TradeBotList({ qortAddress, failedTradeBots }) {
   const [tradeBotList, setTradeBotList] = useState([]);
@@ -67,9 +26,50 @@ export default function TradeBotList({ qortAddress, failedTradeBots }) {
   const offeringTrades = useRef<any[]>([]);
   const qortAddressRef = useRef(null);
   const gridRef = useRef<any>(null);
-  const {updateTemporaryFailedTradeBots,  fetchTemporarySellOrders, deleteTemporarySellOrder} = useContext(gameContext)
+  const {updateTemporaryFailedTradeBots,  fetchTemporarySellOrders, deleteTemporarySellOrder, selectedCoin} = useContext(gameContext)
   const [open, setOpen] = useState(false)
   const [info, setInfo] = useState<any>(null)
+  const columnDefs: ColDef[] = [
+    {
+      headerCheckboxSelection: false, // Adds a checkbox in the header for selecting all rows
+      checkboxSelection: true, // Adds checkboxes in each row for selection
+      headerName: "Select", // You can customize the header name
+      width: 50, // Adjust the width as needed
+      pinned: "left", // Optional, to pin this column on the left
+      resizable: false,
+    },
+    {
+      headerName: "QORT AMOUNT",
+      field: "qortAmount",
+      flex: 1, // Flex makes this column responsive
+      minWidth: 150, // Ensure it doesn't shrink too much
+      resizable: true,
+    },
+    {
+      headerName: `${selectedCoin}/QORT`,
+      valueGetter: (params) =>
+        +params.data.foreignAmount / +params.data.qortAmount,
+      sortable: true,
+      sort: "asc",
+      flex: 1, // Flex makes this column responsive
+      minWidth: 150, // Ensure it doesn't shrink too much
+      resizable: true,
+    },
+    {
+      headerName: `Total ${selectedCoin} Value`,
+      field: "foreignAmount",
+      flex: 1, // Flex makes this column responsive
+      minWidth: 150, // Ensure it doesn't shrink too much
+      resizable: true,
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      flex: 1, // Flex makes this column responsive
+      minWidth: 300, // Ensure it doesn't shrink too much
+      resizable: true,
+    },
+  ];
   const filteredOutTradeBotListWithoutFailed = useMemo(() => {
     const list = tradeBotList.filter(
       (item) =>
@@ -157,8 +157,8 @@ export default function TradeBotList({ qortAddress, failedTradeBots }) {
   const initTradeOffersWebSocket = (restarted = false) => {
     let tradeOffersSocketCounter = 0;
     let socketTimeout: any;
-    // let socketLink = `ws://127.0.0.1:12391/websockets/crosschain/tradebot?foreignBlockchain=LITECOIN`;
-    let socketLink = `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/websockets/crosschain/tradebot?foreignBlockchain=LITECOIN`;
+    // let socketLink = `ws://127.0.0.1:12391/websockets/crosschain/tradebot?foreignBlockchain=${selectedCoin}`;
+    let socketLink = `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/websockets/crosschain/tradebot?foreignBlockchain=${selectedCoin}`;
     const socket = new WebSocket(socketLink);
     socket.onopen = () => {
       setTimeout(pingSocket, 50);
@@ -222,7 +222,7 @@ export default function TradeBotList({ qortAddress, failedTradeBots }) {
       const res = await qortalRequestWithTimeout({
            action: "CANCEL_TRADE_SELL_ORDER",
            qortAmount: selectedTrade.qortAmount,
-           foreignBlockchain: 'LITECOIN',
+           foreignBlockchain: selectedCoin,
            foreignAmount: selectedTrade.foreignAmount,
            atAddress: selectedTrade.atAddress
          }, 900000);
@@ -329,10 +329,10 @@ export default function TradeBotList({ qortAddress, failedTradeBots }) {
       }}>
          {/* <Typography sx={{
           fontSize: '16px',
-          color: selectedTotalLTC > ltcBalance ? 'red' : 'white',
-        }}><span>{selectedTotalLTC?.toFixed(4)}</span> <span style={{
+          color: selectedTotalCoin > coinBalance ? 'red' : 'white',
+        }}><span>{selectedTotalCoin?.toFixed(4)}</span> <span style={{
           marginLeft: 'auto'
-        }}>LTC</span></Typography> */}
+         }}>{selectedCoin}</span></Typography> */}
 
 
         </Box>
@@ -340,9 +340,9 @@ export default function TradeBotList({ qortAddress, failedTradeBots }) {
           fontSize: '16px',
           color: 'white',
           
-        }}><span>{ltcBalance?.toFixed(4)}</span> <span style={{
+        }}><span>{coinBalance?.toFixed(4)}</span> <span style={{
           marginLeft: 'auto'
-        }}>LTC balance</span></Typography> */}
+        }}>{selectedCoin} balance</span></Typography> */}
       </Box>
       {CancelButton()}
     </Box>

@@ -59,15 +59,22 @@ export const Label = styled("label")(
   `
 );
 
-export const Header = ({ qortBalance, ltcBalance, mode, setMode }: any) => {
+export const Header = ({ qortBalance, coinBalance, mode, setMode }: any) => {
   const [openDropdown, setOpenDropdown] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
   const [checked, setChecked] = useState(false);
   const [open, setOpen] = useState(false);
   const [info, setInfo] = useState<any>(null);
-  const { isUsingGateway } = useContext(gameContext);
-  const [selectedCoin, setSelectedCoin] = useState("LITECOIN");
+  const { isUsingGateway, selectedCoin, setSelectedCoin } = useContext(gameContext);
+  const supportedCoins = [
+    { name: "Litecoin", symbol: "LTC", blockchain: "LITECOIN" },
+    { name: "Bitcoin", symbol: "BTC", blockchain: "BITCOIN" },
+    { name: "Dogecoin", symbol: "DOGE", blockchain: "DOGECOIN" },
+    { name: "Digibyte", symbol: "DGB", blockchain: "DIGIBYTE" },
+    { name: "Ravencoin", symbol: "RVN", blockchain: "RAVENCOIN" },
+    // Add more coins here
+  ];
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setChecked(false);
@@ -185,15 +192,18 @@ export const Header = ({ qortBalance, ltcBalance, mode, setMode }: any) => {
             value={selectedCoin}
             onChange={(e) => setSelectedCoin(e.target.value)}
           >
-            <MenuItem value={"LITECOIN"}>LTC</MenuItem>
+            {supportedCoins.map((coin) => (
+              <MenuItem key={coin.blockchain} value={coin.blockchain}>
+                {coin.symbol}
+              </MenuItem>
+            ))}
           </Select>
         </Box>
       </Box>
 
       <RightColumn>
         <HeaderText>
-          Balance: {qortBalance} QORT |{" "}
-          {ltcBalance === null ? "N/A" : ltcBalance} LTC
+          Balance: {qortBalance} QORT | {coinBalance === null ? "N/A" : coinBalance} {selectedCoin}
         </HeaderText>
         <NameRow>
           {userInfo?.name ? (
